@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from .exceptions import NotEnoughMoney
 from .tamagochi import AbstractTamagochi
 from .clicker import AbstractClicker
 from .models import Food, Medicine
@@ -96,3 +97,57 @@ class AbstractGame(ABC):
         :return: список с имеющимися (купленными) объектами лекарств
         """
         raise NotImplementedError
+
+
+class SimpleGame(AbstractGame):
+    def buy_food(self) -> None:
+        food = min(
+            self._all_food,
+            key=lambda item: item.price,
+        )
+
+        if self._coins < food.price:
+            raise NotEnoughMoney("Недостаточно монет")
+
+        self._coins -= food.price
+        self._food.append(food)
+
+    def work(self) -> int:
+        self._clicker.click()
+
+        income = self._clicker.income_per_click
+        self._coins += income
+
+        return income
+
+    def __init__(
+        self,
+        tamagochi: AbstractTamagochi,
+        clicker: AbstractClicker,
+        all_food: list[Food],
+        all_medicine: list[Medicine],
+    ) -> None:
+        self.tamagochi = tamagochi
+        self._clicker = clicker
+
+        self._all_food = all_food
+        self._all_medicine = all_medicine
+
+        self._food: list[Food] = []
+        self._medicine: list[Medicine] = []
+
+        self._coins = 0
+
+    @property
+    def food(self) -> list[Food]:
+        return self._food
+
+    @property
+    def medicine(self) -> list[Medicine]:
+        return self._medicine
+
+    def get_status(self) -> dict[str, Any]:
+        return {
+            **self.tamagochi.status,
+            'coins': self._coins,
+        }
