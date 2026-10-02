@@ -1,7 +1,7 @@
 import os
 
-from game.models import Food, Medicine
 from game.clicker import SimpleRandomClicker
+from game.models import Food, Medicine
 from game.tamagochi import SimpleTamagochi
 
 
@@ -71,6 +71,8 @@ def main():
                 break
             case _:
                 output = "Неверная команда"
+
+        print(game.get_status())
 
         os.system('clear')
 

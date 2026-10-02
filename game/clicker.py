@@ -1,4 +1,5 @@
 from random import randint
+
 """Модуль с интерфейсом и реализацией кликера"""
 
 from abc import ABC, abstractmethod
