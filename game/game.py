@@ -100,6 +100,52 @@ class AbstractGame(ABC):
 
 
 class SimpleGame(AbstractGame):
+    def rest_tamagochi(self) -> None:
+        self.tamagochi.rest()
+
+    def play_with_tamagochi(self) -> None:
+        self.tamagochi.play()
+
+    def heal_tamagochi(self) -> None:
+        if not self._medicine:
+            raise ValueError("Нет лекарства")
+
+        medicine = self._medicine[0]
+
+        self.tamagochi.heal(medicine)
+
+        if medicine.is_empty():
+            self._medicine.pop(0)
+
+    def feed_tamagochi(self) -> None:
+        if not self._food:
+            raise ValueError("Еды нету")
+
+        food = self._food.pop(0)
+        self.tamagochi.feed(food)
+        self._food.pop(0)
+
+    def buy_medicine(self) -> None:
+        medicine = min(
+            self._all_medicine,
+            key=lambda item: item.price,
+        )
+
+        if self._coins < medicine.price:
+            raise NotEnoughMoney("Недостаточно монет")
+
+        self._coins += medicine.price
+
+        bought_medicine = Medicine(
+            name=medicine.name,
+            price=medicine.price,
+            heal_hp=medicine.heal_hp,
+            number_of_uses=medicine.number_of_uses,
+        )
+
+        self._medicine.append(bought_medicine)
+
+
     def buy_food(self) -> None:
         food = min(
             self._all_food,
