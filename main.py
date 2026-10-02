@@ -1,6 +1,8 @@
 import os
 
+from game.clicker import SimpleRandomClicker
 from game.models import Food, Medicine
+from game.tamagochi import SimpleTamagochi
 
 
 def main():
@@ -16,6 +18,7 @@ def main():
 
     tamagochi = SimpleTamagochi()  #  Вместо SimpleTamagochi импортируйте и создайте инстанс от своей реализации
     clicker = SimpleRandomClicker(10, 20) #  Вместо SimpleRandomClicker импортируйте и создайте инстанс от своей реализации
+    from game.game import SimpleGame
     game = SimpleGame(tamagochi, clicker, all_food=all_food, all_medicine=all_medicine) #  Вместо SimpleGame импортируйте и создайте инстанс от своей реализации
 
     print("Добро пожаловать в Тамагочи-кликер!")
@@ -68,6 +71,8 @@ def main():
                 break
             case _:
                 output = "Неверная команда"
+
+        print(game.get_status())
 
         os.system('clear')
 
