@@ -75,16 +75,32 @@ class AbstractTamagochi(ABC):
 
 class Tamagochi(AbstractTamagochi):
     def feed(self, food: Food) -> None:
-        pass
+        # max - защита от < 0
+        self._hunger = max(0, self._hunger - food.satiety)
+        self._energy = max(0, self._energy - 2)
 
     def play(self) -> None:
-        pass
+        self._hunger += 5
+        self._fatigue += 10
+        self._energy = max(0, self._energy - 10)
 
     def rest(self) -> None:
-        pass
+        fatigue_recovery = 10
+        energy_recovery = 15
+
+        if self._sick:
+            fatigue_recovery //= 2
+            energy_recovery //= 2
+
+        self._fatigue = max(0, self._fatigue - fatigue_recovery)
+        self._energy = min(100, self._energy + energy_recovery)
 
     def heal(self, medicine: Medicine) -> None:
-        pass
+        if medicine.is_empty():
+            raise ValueError("Лекарство закончилось")
+
+        self._hp += medicine.heal_hp
+        medicine.uses += 1
 
     def update(self) -> None:
         pass
@@ -114,6 +130,17 @@ class Tamagochi(AbstractTamagochi):
 
 tamagochi = Tamagochi()
 
-print(tamagochi.status)
-print(tamagochi.is_alive())
-print(tamagochi.is_sick())
+# print(tamagochi.status)
+# print(tamagochi.is_alive())
+# print(tamagochi.is_sick())
+
+# medicine = Medicine(
+#     name="Ибупрофен",
+#     price=30,
+#     heal_hp=20,
+#     number_of_uses=2,
+# )
+#
+# tamagochi.heal(medicine)
+# tamagochi.heal(medicine)
+# tamagochi.heal(medicine)
