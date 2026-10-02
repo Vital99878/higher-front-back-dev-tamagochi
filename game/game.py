@@ -123,7 +123,6 @@ class SimpleGame(AbstractGame):
 
         food = self._food.pop(0)
         self.tamagochi.feed(food)
-        self._food.pop(0)
 
     def buy_medicine(self) -> None:
         medicine = min(
