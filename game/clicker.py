@@ -40,12 +40,3 @@ class SimpleRandomClicker(AbstractClicker):
 
     def click(self) -> None:
         self._income_per_click = randint(self._min_income, self._max_income)
-
-
-# clicker = SimpleRandomClicker(min_income=-1, max_income=200)
-#
-# print(clicker.income_per_click)
-#
-# clicker.click()
-#
-# print(clicker.income_per_click)

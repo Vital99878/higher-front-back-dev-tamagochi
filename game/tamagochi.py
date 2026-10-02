@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from models import Food, Medicine
+from game.models import Food, Medicine
 
 
 class AbstractTamagochi(ABC):
@@ -73,7 +73,7 @@ class AbstractTamagochi(ABC):
         raise NotImplementedError
 
 
-class Tamagochi(AbstractTamagochi):
+class SimpleTamagochi(AbstractTamagochi):
     def feed(self, food: Food) -> None:
         # max - защита от < 0
         self._hunger = max(0, self._hunger - food.satiety)
