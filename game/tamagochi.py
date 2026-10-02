@@ -101,9 +101,24 @@ class Tamagochi(AbstractTamagochi):
 
         self._hp += medicine.heal_hp
         medicine.uses += 1
+        self._sick = False
 
+    # Прошло некоторое игровое время — tamagochi сам по себе стал голоднее, устал и потратил энергию.
     def update(self) -> None:
-        pass
+        self._hunger = min(100, self._hunger + 5)
+        self._fatigue = min(100, self._fatigue + 5)
+        self._energy = max(0, self._energy - 5)
+
+        if (
+                self._hunger >= 80
+                or self._fatigue >= 80
+                or self._energy <= 20
+        ):
+            self._sick = True
+
+        if self._sick:
+            self._hp -= 10
+            self._fatigue = min(100, self._fatigue + 5)
 
     def __init__(self) -> None:
         self._hp = 100
@@ -127,20 +142,3 @@ class Tamagochi(AbstractTamagochi):
     def is_sick(self) -> bool:
         return self._sick
 
-
-tamagochi = Tamagochi()
-
-# print(tamagochi.status)
-# print(tamagochi.is_alive())
-# print(tamagochi.is_sick())
-
-# medicine = Medicine(
-#     name="Ибупрофен",
-#     price=30,
-#     heal_hp=20,
-#     number_of_uses=2,
-# )
-#
-# tamagochi.heal(medicine)
-# tamagochi.heal(medicine)
-# tamagochi.heal(medicine)
