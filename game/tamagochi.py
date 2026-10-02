@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from .models import Food, Medicine
+from models import Food, Medicine
 
 
 class AbstractTamagochi(ABC):
@@ -71,3 +71,49 @@ class AbstractTamagochi(ABC):
         Должен использоваться после каждого взаимодействия с тамагочи
         """
         raise NotImplementedError
+
+
+class Tamagochi(AbstractTamagochi):
+    def feed(self, food: Food) -> None:
+        pass
+
+    def play(self) -> None:
+        pass
+
+    def rest(self) -> None:
+        pass
+
+    def heal(self, medicine: Medicine) -> None:
+        pass
+
+    def update(self) -> None:
+        pass
+
+    def __init__(self) -> None:
+        self._hp = 100
+        self._energy = 100
+        self._hunger = 0
+        self._fatigue = 0
+        self._sick = False
+
+    @property
+    def status(self) -> dict[str, int]:
+        return {
+            "hunger": self._hunger,
+            "fatigue": self._fatigue,
+            "hp": self._hp,
+            "energy": self._energy,
+        }
+
+    def is_alive(self) -> bool:
+        return self._hp >= 0
+
+    def is_sick(self) -> bool:
+        return self._sick
+
+
+tamagochi = Tamagochi()
+
+print(tamagochi.status)
+print(tamagochi.is_alive())
+print(tamagochi.is_sick())
