@@ -100,31 +100,68 @@ class AbstractGame(ABC):
 
 
 class SimpleGame(AbstractGame):
+    """Реализация игровой логики и управления ресурсами."""
+
     def rest_tamagochi(self) -> None:
+        """
+        Дать питомцу отдохнуть.
+
+        :return: None
+        """
         self.tamagochi.rest()
 
     def play_with_tamagochi(self) -> None:
+        """
+        Поиграть с питомцем.
+
+        :return: None
+        """
         self.tamagochi.play()
 
     def heal_tamagochi(self) -> None:
+        """
+        Вылечить питомца первым доступным лекарством из инвентаря.
+
+        После последнего использования лекарство удаляется из инвентаря.
+
+        :return: None
+        :raises ValueError: если в инвентаре нет лекарств
+        """
         if not self._medicine:
             raise ValueError("Нет лекарства")
 
         medicine = self._medicine[0]
-
         self.tamagochi.heal(medicine)
 
         if medicine.is_empty():
             self._medicine.pop(0)
 
     def feed_tamagochi(self) -> None:
+        """
+        Покормить питомца первой доступной едой из инвентаря.
+
+        Еда удаляется из инвентаря после успешного кормления.
+
+        :return: None
+        :raises ValueError: если в инвентаре нет еды
+        """
         if not self._food:
             raise ValueError("Еды нету")
 
-        food = self._food.pop(0)
+        food = self._food[0]
         self.tamagochi.feed(food)
+        self._food.pop(0)
 
     def buy_medicine(self) -> None:
+        """
+        Купить самое дешёвое доступное лекарство.
+
+        Для каждой покупки создаётся новый экземпляр Medicine, чтобы
+        количество использований каждой упаковки хранилось независимо.
+
+        :return: None
+        :raises NotEnoughMoney: если монет недостаточно для покупки
+        """
         medicine = min(
             self._all_medicine,
             key=lambda item: item.price,
@@ -133,7 +170,7 @@ class SimpleGame(AbstractGame):
         if self._coins < medicine.price:
             raise NotEnoughMoney("Недостаточно монет")
 
-        self._coins += medicine.price
+        self._coins -= medicine.price
 
         bought_medicine = Medicine(
             name=medicine.name,
@@ -144,8 +181,13 @@ class SimpleGame(AbstractGame):
 
         self._medicine.append(bought_medicine)
 
-
     def buy_food(self) -> None:
+        """
+        Купить самый дешёвый доступный продукт.
+
+        :return: None
+        :raises NotEnoughMoney: если монет недостаточно для покупки
+        """
         food = min(
             self._all_food,
             key=lambda item: item.price,
@@ -158,6 +200,11 @@ class SimpleGame(AbstractGame):
         self._food.append(food)
 
     def work(self) -> int:
+        """
+        Выполнить действие «работа» и увеличить баланс монет.
+
+        :return: количество монет, заработанных за текущее действие
+        """
         self._clicker.click()
 
         income = self._clicker.income_per_click
@@ -172,11 +219,20 @@ class SimpleGame(AbstractGame):
         all_food: list[Food],
         all_medicine: list[Medicine],
     ) -> None:
+        """
+        Инициализировать игровое состояние.
+
+        :param tamagochi: экземпляр питомца, реализующий AbstractTamagochi
+        :param clicker: экземпляр кликера, реализующий AbstractClicker
+        :param all_food: каталог доступной еды
+        :param all_medicine: каталог доступных лекарств
+        :return: None
+        """
         self.tamagochi = tamagochi
         self._clicker = clicker
 
-        self._all_food = all_food
-        self._all_medicine = all_medicine
+        self._all_food = all_food.copy()
+        self._all_medicine = all_medicine.copy()
 
         self._food: list[Food] = []
         self._medicine: list[Medicine] = []
@@ -185,13 +241,34 @@ class SimpleGame(AbstractGame):
 
     @property
     def food(self) -> list[Food]:
-        return self._food
+        """
+        Получить список купленной еды.
+
+        Возвращается копия списка, чтобы внешний код не мог напрямую
+        изменить внутренний инвентарь игры.
+
+        :return: копия списка объектов Food в инвентаре
+        """
+        return self._food.copy()
 
     @property
     def medicine(self) -> list[Medicine]:
-        return self._medicine
+        """
+        Получить список купленных лекарств.
+
+        Возвращается копия списка, чтобы внешний код не мог напрямую
+        изменить структуру внутреннего инвентаря игры.
+
+        :return: копия списка объектов Medicine в инвентаре
+        """
+        return self._medicine.copy()
 
     def get_status(self) -> dict[str, Any]:
+        """
+        Получить объединённый статус питомца и игры.
+
+        :return: словарь с характеристиками питомца и количеством монет
+        """
         return {
             **self.tamagochi.status,
             'coins': self._coins,
