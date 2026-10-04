@@ -133,7 +133,7 @@ class SimpleGame(AbstractGame):
         if self._coins < medicine.price:
             raise NotEnoughMoney("Недостаточно монет")
 
-        self._coins += medicine.price
+        self._coins -= medicine.price
 
         bought_medicine = Medicine(
             name=medicine.name,
