@@ -2,6 +2,7 @@ import os
 
 from game.clicker import SimpleRandomClicker
 from game.exceptions import NotEnoughMoney, TamagochiIsGone
+from game.game import SimpleGame
 from game.models import Food, Medicine
 from game.tamagochi import SimpleTamagochi
 
@@ -17,10 +18,9 @@ def main():
         Medicine(name='Ибупрофен', price=30, heal_hp=20, number_of_uses=2)
     ]
 
-    tamagochi = SimpleTamagochi()  #  Вместо SimpleTamagochi импортируйте и создайте инстанс от своей реализации
-    clicker = SimpleRandomClicker(10, 20) #  Вместо SimpleRandomClicker импортируйте и создайте инстанс от своей реализации
-    from game.game import SimpleGame
-    game = SimpleGame(tamagochi, clicker, all_food=all_food, all_medicine=all_medicine) #  Вместо SimpleGame импортируйте и создайте инстанс от своей реализации
+    tamagochi = SimpleTamagochi()
+    clicker = SimpleRandomClicker(10, 20)
+    game = SimpleGame(tamagochi, clicker, all_food=all_food, all_medicine=all_medicine)
 
     print("Добро пожаловать в Тамагочи-кликер!")
     output = ''
@@ -84,9 +84,11 @@ def main():
         except ValueError as error:
             output = str(error)
 
-        print(game.get_status())
+        except TamagochiIsGone as error:
+            print(error)
+            break
 
-        # os.system('clear')
+        os.system('clear')
 
 
 if __name__ == "__main__":
