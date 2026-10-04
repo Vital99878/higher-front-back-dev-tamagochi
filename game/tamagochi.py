@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 
 from game.models import Food, Medicine
 
-
 MAX_STATE_VALUE = 100
 INITIAL_HP = 100
 INITIAL_ENERGY = 100
